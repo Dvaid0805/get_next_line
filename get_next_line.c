@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:39:34 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/06/08 16:12:10 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/06/10 17:01:56 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,26 +55,24 @@ static int	find_line(char *buf, char **line)
 	int		i;
 	int		j;
 	int		resp;
-	char	*find_line;
+	char	*new_line;
 
 	i = 0;
-	j = 0;
+	j = -1;
 	while (buf[i] && buf[i] != '\n')
 		i++;
-	resp = 0;
-	if (buf[i] == '\n')
-		resp = 1;
-	find_line = ft_calloc(i + resp + 1, 1);
-	if (!find_line)
+	resp = (buf[i] == '\n');
+	new_line = ft_calloc(i + resp + 1, 1);
+	if (!new_line)
 		return (-1);
-	while (j < i + resp)
+	while (++j < i + resp)
+		new_line[j] = buf[j];
+	*line = ft_strjoin(*line, new_line);
+	if (!*line)
 	{
-		find_line[j] = buf[j];
-		j++;
-	}
-	*line = ft_strjoin(*line, find_line);
-	if (line == NULL)
+		free(new_line);
 		return (-1);
+	}
 	ft_replace(buf, &buf[i + resp]);
 	return (resp);
 }
@@ -83,23 +81,23 @@ char	*get_next_line(int fd)
 {
 	static char	buf[BUFFER_SIZE + 1];
 	char		*line;
-	int			flag_line;
+	int			line_flag;
 	ssize_t		read_size;
 
 	line = NULL;
-	flag_line = 0;
+	line_flag = 0;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (flag_line == 0)
+	while (line_flag == 0)
 	{
-		flag_line = find_line(buf, &line);
-		if (flag_line == -1)
+		line_flag = find_line(buf, &line);
+		if (line_flag == -1)
 			return (free_line(line));
-		if (flag_line == 0)
+		if (line_flag == 0)
 		{
 			read_size = read(fd, buf, BUFFER_SIZE);
 			if (read_size == 0 && *line)
-				flag_line = 1;
+				line_flag = 1;
 			else if (read_size <= 0)
 				return (free_line(line));
 			buf[read_size] = '\0';

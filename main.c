@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 13:40:11 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/06/08 15:10:20 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/06/10 16:48:51 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int	main(void)
 
 	filename = "test.txt";
 	fd = open(filename, O_RDONLY);
-	printf("%s\n", get_next_line(fd));
-	close(fd);
-	printf("%s\n", get_next_line(fd));
+	printf("main: %s\n", get_next_line(fd));
+	/* close(fd); */
+	printf("main: %s\n", get_next_line(fd));
 	return (0);
 }
