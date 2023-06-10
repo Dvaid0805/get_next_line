@@ -33,3 +33,7 @@ int	main(void)
 
 /* fd = open("hola.txt", 0); en vez de O_RDONLY */
 /* char *line = get_next_line(0);   */
+/*
+gcc -g main.c get_next_line_utils.c get_next_line.c
+valgrind --leak-check=yes ./a.out 
+*/
