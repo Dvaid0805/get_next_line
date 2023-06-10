@@ -25,7 +25,7 @@ int	main(void)
 
 	atexit(ft_leaks);
 	fd = open("hola.txt", 0);
-	get_next_line(fd);
+	line = get_next_line(fd);
 	printf("main: %s\n", line);
 	free(line);
 	return (0);
