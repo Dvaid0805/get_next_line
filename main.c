@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/10 21:23:11 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/06/10 22:17:35 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/08/25 20:16:28 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	ft_leaks(void)
 {
 	system ("leaks -q test");
 }
-// pa checkear lick de memoria
 
 int	main(void)
 {
@@ -24,16 +23,15 @@ int	main(void)
 	char	*line;
 
 	atexit(ft_leaks);
-	fd = open("hola.txt", 0);
+	fd = open("test.txt", 0);
 	line = get_next_line(fd);
 	printf("main: %s\n", line);
 	free(line);
 	return (0);
 }
 
-/* fd = open("hola.txt", 0); en vez de O_RDONLY */
-/* char *line = get_next_line(0);   */
 /*
-gcc -g main.c get_next_line_utils.c get_next_line.c
-valgrind --leak-check=yes ./a.out 
+	usage of valgrind:
+		gcc -g main.c get_next_line_utils.c get_next_line.c
+		valgrind --leak-check=yes ./a.out
 */
