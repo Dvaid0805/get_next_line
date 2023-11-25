@@ -123,8 +123,8 @@ static char	*read_line(int fd, char *stash)
 
 char	*get_next_line(int fd)
 {
-	char	*stash;
-	char	*line;
+	static char 	*stash;
+	char	        *line;
 
 	stash = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (read(fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
