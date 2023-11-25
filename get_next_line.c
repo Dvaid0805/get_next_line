@@ -6,102 +6,141 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:39:34 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/06/10 17:01:56 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/25 21:32:36 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*ft_strjoin(char *s1, char *s2)
-{
-	char	*res;
-	size_t	len;
-
-	if (s1 == NULL)
-		return (s2);
-	len = ft_strlen(s1) + ft_strlen(s2) + 1;
-	res = ft_calloc(len, sizeof(char));
-	if (!res)
-		return (NULL);
-	ft_strlcpy(res, s1, len + 1);
-	ft_strlcat(res, s2, len + 1);
-	free(s1);
-	free(s2);
-	return (res);
-}
-
-static void	ft_replace(char *s1, char *s2)
+static int	ft_strlen(char *str)
 {
 	int	i;
 
 	i = 0;
-	while (s2[i])
-	{
-		s1[i] = s2[i];
+	while (str[i])
 		i++;
-	}
-	s1[i] = '\0';
+	return (i);
 }
 
-static void	*free_line(char *line)
+static char	*del_stash_line(char *stash)
 {
-	if (line != NULL)
-		free(line);
-	return (NULL);
-}
-
-static int	find_line(char *buf, char **line)
-{
+	char	*new_stash;
 	int		i;
 	int		j;
-	int		resp;
-	char	*new_line;
 
 	i = 0;
-	j = -1;
-	while (buf[i] && buf[i] != '\n')
+	j = 0;
+	while (stash[i] != '\n')
 		i++;
-	resp = (buf[i] == '\n');
-	new_line = ft_calloc(i + resp + 1, 1);
-	if (!new_line)
-		return (-1);
-	while (++j < i + resp)
-		new_line[j] = buf[j];
-	*line = ft_strjoin(*line, new_line);
-	if (!*line)
+	if (!stash[i])
 	{
-		free(new_line);
-		return (-1);
+		free(stash);
+		return (NULL);
 	}
-	ft_replace(buf, &buf[i + resp]);
-	return (resp);
+	new_stash = malloc(sizeof(char) * (ft_strlen(stash) - i + 1));
+	if (!new_stash)
+		return (NULL);
+	i++;
+	while (stash[i])
+		new_stash[j++] = stash[i++];
+	new_stash[j] = '\0';
+	free(stash);
+	return (new_stash);
+}
+
+static char	*ft_strjoin(char *stash, char *buff)
+{
+	char	*str;
+	int		i;
+	int		j;
+
+	str = malloc(sizeof(char) * (ft_strlen(stash) + ft_strlen(buff) + 1));
+	if (!str)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (stash[i])
+	{
+		str[i] = stash[i];
+		i++;
+	}
+	while (buff[j])
+	{
+		str[i] = buff[j];
+		i++;
+		j++;
+	}
+	str[i] = '\0';
+	free(stash);
+	return (str);
+}
+
+static char	*fill_line(char *stash)
+{
+	char	*line;
+	int		i;
+
+	i = 0;
+	while (stash[i] != '\n')
+		i++;
+	line = malloc(sizeof(char) * (i + 1));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (stash[i] != '\n')
+	{
+		line[i] = stash[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
+}
+
+static char	*read_line(int fd, char *stash)
+{
+	char	*buff;
+	int		buff_flag;
+
+	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buff)
+		return (NULL);
+	buff_flag = 1;
+	while (buff_flag > 0)
+	{
+		buff_flag = read(fd, buff, BUFFER_SIZE);
+		if (buff_flag == -1)
+			return (NULL);
+		buff[buff_flag] = '\0';
+		if (strrchr(buff, '\n') != NULL)
+			buff_flag = -1;
+		stash = ft_strjoin(stash, buff);
+		if (!stash)
+			return (NULL);
+	}
+	free(buff);
+	return (stash);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	buf[BUFFER_SIZE + 1];
-	char		*line;
-	int			line_flag;
-	ssize_t		read_size;
+	char	*stash;
+	char	*line;
 
-	line = NULL;
-	line_flag = 0;
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	stash = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (read(fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	while (line_flag == 0)
-	{
-		line_flag = find_line(buf, &line);
-		if (line_flag == -1)
-			return (free_line(line));
-		if (line_flag == 0)
-		{
-			read_size = read(fd, buf, BUFFER_SIZE);
-			if (read_size == 0 && *line)
-				line_flag = 1;
-			else if (read_size <= 0)
-				return (free_line(line));
-			buf[read_size] = '\0';
-		}
-	}
+	stash = read_line(fd, stash);
+	line = fill_line(stash);
+	stash = del_stash_line(stash);
 	return (line);
+}
+
+int	main(void)
+{
+	int		fd;
+
+	fd = open("test.txt", O_RDONLY);
+	printf ("res: %s\n", get_next_line(fd));
+	printf ("res: %s\n", get_next_line(fd));
+	return (0);
 }
