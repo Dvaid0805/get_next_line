@@ -3,39 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:39:34 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/26 12:01:24 by marvin           ###   ########.fr       */
+/*   Updated: 2023/11/26 14:45:22 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "get_next_line.h"
-
-static int	ft_strlen(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-static char *ft_strrchar(char *s, int c)
-{
-	int i;
-
-	i = ft_strlen(s);
-	while (i >= 0)
-	{
-		if (s[i] == (char)c)
-			return ((char *)s + i + 1);
-		i--;
-	}
-	return (NULL);
-}
 
 static char	*del_stash_line(char *stash)
 {
@@ -48,10 +23,7 @@ static char	*del_stash_line(char *stash)
 	while (stash[i] != '\n')
 		i++;
 	if (!stash[i])
-	{
-		free(stash);
-		return (NULL);
-	}
+		return (free(stash), NULL);
 	new_stash = malloc(sizeof(char) * (ft_strlen(stash) - i + 1));
 	if (!new_stash)
 		return (NULL);
@@ -59,35 +31,7 @@ static char	*del_stash_line(char *stash)
 	while (stash[i])
 		new_stash[j++] = stash[i++];
 	new_stash[j] = '\0';
-	free(stash);
-	return (new_stash);
-}
-
-static char	*ft_strjoin(char *stash, char *buff)
-{
-	char	*str;
-	int		i;
-	int		j;
-
-	str = malloc(sizeof(char) * (ft_strlen(stash) + ft_strlen(buff) + 1));
-	if (!str)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (stash[i])
-	{
-		str[i] = stash[i];
-		i++;
-	}
-	while (buff[j])
-	{
-		str[i] = buff[j];
-		i++;
-		j++;
-	}
-	str[i] = '\0';
-	free(stash);
-	return (str);
+	return (free(stash), new_stash);
 }
 
 static char	*fill_line(char *stash)
@@ -116,7 +60,7 @@ static char	*read_line(int fd, char *stash)
 	char	*buff;
 	int		buff_flag;
 
-    if (!stash)
+	if (!stash)
 		stash = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
@@ -134,17 +78,20 @@ static char	*read_line(int fd, char *stash)
 		if (!stash)
 			return (NULL);
 	}
-	free(buff);
-	return (stash);
+	return (free(buff), stash);
 }
 
 char	*get_next_line(int fd)
 {
-	static char 	*stash;
-	char	        *line;
+	static char	*stash;
+	char		*line;
 
-	if (read(fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
+	if (read(fd, NULL, 0) < 0 || BUFFER_SIZE < 1)
+	{
+		if (stash)
+			free(stash);
 		return (NULL);
+	}
 	stash = read_line(fd, stash);
 	line = fill_line(stash);
 	stash = del_stash_line(stash);
