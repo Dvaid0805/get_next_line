@@ -116,6 +116,8 @@ static char	*read_line(int fd, char *stash)
 	char	*buff;
 	int		buff_flag;
 
+    if (!stash)
+		stash = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	buff = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buff)
 		return (NULL);
@@ -141,7 +143,6 @@ char	*get_next_line(int fd)
 	static char 	*stash;
 	char	        *line;
 
-	stash = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (read(fd, NULL, 0) < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	stash = read_line(fd, stash);
