@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:41:17 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/26 14:37:57 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/26 20:15:25 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 char	*get_next_line(int fd);
 char	*ft_strrchar(char *s, int c);
 int		ft_strlen(char *str);
-char	*ft_strjoin(char *stash, char *buff);
+char	*ft_strjoin(char **stash, char *buff);
+void	*ft_calloc(size_t size, size_t count);
 
 #endif
