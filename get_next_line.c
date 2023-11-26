@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:39:34 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/25 21:32:36 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/26 12:01:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "get_next_line.h"
 
@@ -20,6 +21,20 @@ static int	ft_strlen(char *str)
 	while (str[i])
 		i++;
 	return (i);
+}
+
+static char *ft_strrchar(char *s, int c)
+{
+	int i;
+
+	i = ft_strlen(s);
+	while (i >= 0)
+	{
+		if (s[i] == (char)c)
+			return ((char *)s + i + 1);
+		i--;
+	}
+	return (NULL);
 }
 
 static char	*del_stash_line(char *stash)
@@ -111,7 +126,7 @@ static char	*read_line(int fd, char *stash)
 		if (buff_flag == -1)
 			return (NULL);
 		buff[buff_flag] = '\0';
-		if (strrchr(buff, '\n') != NULL)
+		if (ft_strrchar(buff, '\n') != NULL)
 			buff_flag = -1;
 		stash = ft_strjoin(stash, buff);
 		if (!stash)
