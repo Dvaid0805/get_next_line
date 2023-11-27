@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 14:34:46 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/26 20:19:16 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/27 18:23:49 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	*ft_calloc(size_t size, size_t count)
 {
-	unsigned char	*ptr;
+	char			*ptr;
 	size_t			i;
 
-	ptr = (unsigned char *)malloc(size * count);
+	ptr = malloc(size * count);
 	if (!ptr)
 		return (NULL);
 	i = 0;
@@ -35,7 +35,8 @@ char	*ft_strjoin(char **stash, char *buff)
 	int		i;
 	int		j;
 
-	str = ft_calloc(sizeof(char), (ft_strlen(*stash) + ft_strlen(buff) + 1));
+	str = ft_calloc(sizeof(char),
+			(ft_strlen(*stash, 0) + ft_strlen(buff, 0) + 1));
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -54,14 +55,22 @@ char	*ft_strjoin(char **stash, char *buff)
 	return (free(*stash), str);
 }
 
-int	ft_strlen(char *str)
+int	ft_strlen(char *str, int line_f)
 {
 	int	i;
 
 	i = 0;
+	if (line_f)
+	{
+		while (str[i] && str[i] != '\n')
+			i++;
+		if (str[i] == '\n')
+			i++;
+		return (i);
+	}
 	if (!str)
 		return (0);
-	while (str[i])
+	while (str[i] != '\0')
 		i++;
 	return (i);
 }
@@ -72,7 +81,7 @@ char	*ft_strrchar(char *s, int c)
 
 	if (!s)
 		return (NULL);
-	i = ft_strlen(s);
+	i = ft_strlen(s, 0);
 	while (i >= 0)
 	{
 		if (s[i] == (char)c)
