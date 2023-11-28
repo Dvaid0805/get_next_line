@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 14:34:46 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/27 18:23:49 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/28 13:13:05 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	*ft_calloc(size_t size, size_t count)
 	char			*ptr;
 	size_t			i;
 
+	if (size == 0 || count == 0)
+		return (NULL);
 	ptr = malloc(size * count);
 	if (!ptr)
 		return (NULL);
@@ -29,21 +31,21 @@ void	*ft_calloc(size_t size, size_t count)
 	return (ptr);
 }
 
-char	*ft_strjoin(char **stash, char *buff)
+char	*ft_strjoin(char *stash, char *buff)
 {
 	char	*str;
 	int		i;
 	int		j;
 
 	str = ft_calloc(sizeof(char),
-			(ft_strlen(*stash, 0) + ft_strlen(buff, 0) + 1));
+			(ft_strlen(stash, 0) + ft_strlen(buff, 0) + 1));
 	if (!str)
 		return (NULL);
 	i = 0;
 	j = 0;
-	while ((*stash)[i])
+	while (stash[i])
 	{
-		str[i] = (*stash)[i];
+		str[i] = stash[i];
 		i++;
 	}
 	while (buff[j])
@@ -52,7 +54,7 @@ char	*ft_strjoin(char **stash, char *buff)
 		i++;
 		j++;
 	}
-	return (free(*stash), str);
+	return (free(stash), str);
 }
 
 int	ft_strlen(char *str, int line_f)

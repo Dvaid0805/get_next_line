@@ -6,7 +6,7 @@
 /*   By: dbredykh <dbredykh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/27 21:39:34 by dbredykh          #+#    #+#             */
-/*   Updated: 2023/11/27 18:29:19 by dbredykh         ###   ########.fr       */
+/*   Updated: 2023/11/28 13:13:29 by dbredykh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ static char	*fill_line(char *stash)
 	if (!len)
 		return (NULL);
 	line = ft_calloc(sizeof(char), len);
+	if (!line)
+		return (free(stash), NULL);
 	while (stash[i] != '\0' && stash[i] != '\n')
 	{
 		line[i] = stash[i];
@@ -74,7 +76,9 @@ static char	*read_line(int fd, char *stash)
 	{
 		buff_flag = read(fd, buff, BUFFER_SIZE);
 		buff[buff_flag] = '\0';
-		stash = ft_strjoin(&stash, buff);
+		stash = ft_strjoin(stash, buff);
+		if (!stash)
+			return (free(stash), NULL);
 	}
 	if (stash && stash[0] == '\0')
 		return (free(stash), free(buff), NULL);
@@ -87,13 +91,20 @@ char	*get_next_line(int fd)
 	char		*line;
 
 	line = NULL;
-	if (!stash)
-		stash = ft_calloc(sizeof(char), 1);
-	if (fd < 0 || read(fd, NULL, 0) < 0 || BUFFER_SIZE < 1)
+	if (BUFFER_SIZE <= 0 || fd < 0)
+		return (NULL);
+	if (read(fd, NULL, 0) == -1)
 	{
-		free(stash);
+		if (stash)
+			free(stash);
 		stash = NULL;
 		return (NULL);
+	}
+	if (!stash)
+	{
+		stash = ft_calloc(sizeof(char), 1);
+		if (!stash)
+			return (NULL);
 	}
 	stash = read_line(fd, stash);
 	line = fill_line(stash);
