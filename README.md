@@ -1,5 +1,7 @@
 # 📖 get_next_line 📖
 
+> This repository contains a "get_next_line" project that is part of the École 42 curriculum.
+
 `get_next_line` is a project aimed at coding a function that reads a file descriptor and returns one line at a time from the file. This project enhances skills in file I/O, string handling, and memory management in C.
 
 ## ✏️ What does it do?
